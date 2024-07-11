@@ -6,10 +6,24 @@
 ![image](https://github.com/user-attachments/assets/521f56a5-636a-43fc-88e3-de8dd5831a8d) 
 ![image](https://github.com/user-attachments/assets/998b5f35-df01-4355-94e3-f268703f23ea)
 
-
-
-
-
 # Tecnologias
 
+- HTML
+- JavaScript
+- Bootstrap
+- CSS
+- API Google Maps
+
+
 # Projeto
+Aplicativo Geolocalização para Pesquisa de Viabilidade Técnica
+
+- Pesquisa de endereço
+- Pesquisa de complementos
+- Pesquisa de Viabilidade
+- Captura Online da Geolocalização
+- Controle de Status do usuario
+- Carteira de endereços (rotas)
+- Pos Venda
+- Relatório de performance
+- Cadastro de cliente e endereço com possivel viabilidade
