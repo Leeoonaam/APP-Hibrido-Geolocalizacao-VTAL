@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<html style="" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>:: STT - GAT® Link ::</title>
+
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta name="description" content="STT GAT Link">
+    <meta name="keywords" content="app,maps,stt">
+    <meta name="author" content="leonamcorreia">
+
+
+    <link href="files/pace-theme-flash.css" rel="stylesheet">
+    <link href="files/uniform.default.min.css" rel="stylesheet">
+    <link href="files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./weather-icons-master/css/weather-icons.min.css" rel="stylesheet" type="text/css">
+    <link href="./simple-line-icons-master/css/simple-line-icons.css" rel="stylesheet" type="text/css">
+    <link href="files/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="files/menu_cornerbox.css" rel="stylesheet" type="text/css">
+    <link href="files/waves.min.css" rel="stylesheet" type="text/css">
+    <link href="files/switchery.min.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <link href="files/component.css" rel="stylesheet" type="text/css">
+    <link href="files/MetroJs.min.css" rel="stylesheet" type="text/css">
+    <link href="files/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="files/modern.min.css" rel="stylesheet" type="text/css">
+    <link href="files/green.css" class="theme-color" rel="stylesheet" type="text/css">
+    <link href="files/custom.css" rel="stylesheet" type="text/css">
+    <script src="js/apijs.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
+
+
+    <!-- Funções -->
+    <script>
+
+        //Page Load
+        window.onload = function () {
+
+                navigator.geolocation.getCurrentPosition(function showpotion(position) {
+                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+                    //define conf
+                    var options = {
+                        zoom: 18,
+                        center: latlng
+                    };
+
+                    //cria mapa
+                    map2 = new google.maps.Map(document.getElementById("mapa"), options);
+
+                    //coloca marcador
+                    var marker = new google.maps.Marker({ position: latlng, map: map2, label: { text: "Você está aqui", fontSize: '16px', fontWeight: '990' } });
+
+                });
+
+
+            //captura localização
+            getLocation();
+
+            //limpa todos os dados da memoria
+            window.localStorage.clear()
+
+        }
+
+        //Captura posição
+        function showPosition(position) {
+
+            //cria posicao
+            var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+            //instancia
+            const geocoder = new google.maps.Geocoder();
+
+            //captura do endereço de acordo com a LAT e LONG
+            const input = position.coords.latitude + ',' + position.coords.longitude;
+            const latlngStr = input.split(",", 2);
+            const latlng2 = {
+                lat: parseFloat(latlngStr[0]),
+                lng: parseFloat(latlngStr[1]),
+            };
+
+        }
+
+        
+        //Captura localização
+        function getLocation() {
+
+            if (navigator.geolocation) {
+
+                navigator.geolocation.getCurrentPosition(showPosition);
+            }
+        }
+
+
+		
+
+      
+
+    </script>
+
+    <!-- Estilo -->
+    <style>
+        /* DivTable.com */
+        .divTable {
+            display: table;
+            width: 100%;
+        }
+
+        .divTableRow {
+            display: table-row;
+        }
+
+        .divTableHeading {
+            background-color: #EEE;
+            display: table-header-group;
+        }
+
+        .divTableCell, .divTableHead {
+            border: none;
+            display: table-cell;
+            padding: 3px 10px;
+        }
+
+        .divTableHeading {
+            background-color: #EEE;
+            display: table-header-group;
+            font-weight: bold;
+        }
+
+        .divTableFoot {
+            background-color: #EEE;
+            display: table-footer-group;
+            font-weight: bold;
+        }
+
+        .divTableBody {
+            display: table-row-group;
+        }
+
+
+        #mapa {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #ccc;
+            margin-bottom: 10px;
+        }
+    </style>
+
+
+</head>
+<body class="page-header-fixed  pace-done">
+
+<!--Google map-->
+                        <div id="mapa"></div>
+
+                        <!--Google map-->
+                        <div id="mapas"></div>
+
+
+<!-- KEY -->
+            <script async defer
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBio6j0bRhFzCnt3k0mJ9eB-8TReMGeTD8">
+
+            </script>
+
+    <!-- Javascripts -->
+    <script src="files/jquery-2.1.4.min.js"></script>
+    <script src="files/jquery-ui.min.js"></script>
+    <script src="files/pace.min.js"></script>
+    <script src="files/jquery.blockui.js"></script>
+    <script src="files/bootstrap.min.js"></script>
+    <script src="files/jquery.slimscroll.min.js"></script>
+    <script src="files/switchery.min.js"></script>
+    <script src="files/jquery.uniform.min.js"></script>
+    <script src="files/classie.js"></script>
+    <script src="files/waves.min.js"></script>
+    <script src="files/main2.js"></script>
+    <script src="files/jquery.waypoints.min.js"></script>
+    <script src="files/jquery.counterup.min.js"></script>
+    <script src="files/toastr.min.js"></script>
+    <script src="files/jquery.flot.min.js"></script>
+    <script src="files/jquery.flot.time.min.js"></script>
+    <script src="files/jquery.flot.symbol.min.js"></script>
+    <script src="files/jquery.flot.resize.min.js"></script>
+    <script src="files/jquery.flot.tooltip.min.js"></script>
+    <script src="files/curvedLines.js"></script>
+    <script src="files/MetroJs.min.js"></script>
+    <script src="files/modern.js"></script>
+
+    <div id="flotTip" style="display: none; position: absolute;"></div>
+
+</body>
+</html>

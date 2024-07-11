@@ -1,0 +1,61 @@
+.page-content {
+    background: #464644;
+}
+
+.navbar .logo-box {
+    background: #6B1846;
+}
+
+.navbar .logo-box a {
+    color: #fff;
+}
+
+.sidebar {
+    background: #464644;
+}
+
+.sidebar-header {
+    background: #464644;
+}
+
+.sidebar-profile span small {
+    color: #F3FF01;
+}
+
+.menu {
+    background: #464644;
+}
+
+.menu.accordion-menu a {
+    color: #F3FF01;
+}
+
+.menu.accordion-menu > li > a:hover {
+	background: #8F9529;
+    color: #fff;
+}
+
+.menu.accordion-menu > li.active > a,
+.menu.accordion-menu > li.active.open > a {
+	background: #8F9529;
+    color: #fff;
+}
+
+.small-sidebar:not(.page-sidebar-fixed) .accordion-menu li.droplink:hover > a,
+.horizontal-bar .accordion-menu > li.droplink:hover > a,
+.menu.accordion-menu ul,
+.menu.accordion-menu li.open > a,
+.hover-menu .accordion-menu > li.droplink:hover > a {
+    background: #8F9529;
+    color: #fff;
+}
+
+.menu.accordion-menu ul li a:hover,
+.menu.accordion-menu ul li.active a {
+	background: #34425A;
+    color: #fff;
+}
+
+.menu.accordion-menu ul li a {
+    color: #F3FF01;
+}

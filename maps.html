@@ -1,0 +1,736 @@
+﻿<!DOCTYPE html>
+<html style="" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>:: STT - GAT® Link ::</title>
+
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta name="description" content="STT GAT Link">
+    <meta name="keywords" content="app,maps,stt">
+    <meta name="author" content="leonamcorreia">
+
+
+    <link href="files/pace-theme-flash.css" rel="stylesheet">
+    <link href="files/uniform.default.min.css" rel="stylesheet">
+    <link href="files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./weather-icons-master/css/weather-icons.min.css" rel="stylesheet" type="text/css">
+    <link href="./simple-line-icons-master/css/simple-line-icons.css" rel="stylesheet" type="text/css">
+    <link href="files/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="files/menu_cornerbox.css" rel="stylesheet" type="text/css">
+    <link href="files/waves.min.css" rel="stylesheet" type="text/css">
+    <link href="files/switchery.min.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <link href="files/component.css" rel="stylesheet" type="text/css">
+    <link href="files/MetroJs.min.css" rel="stylesheet" type="text/css">
+    <link href="files/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="files/modern.min.css" rel="stylesheet" type="text/css">
+    <link href="files/green.css" class="theme-color" rel="stylesheet" type="text/css">
+    <link href="files/custom.css" rel="stylesheet" type="text/css">
+    <script src="js/apijs.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
+
+
+    <!-- Funções -->
+    <script>
+
+        //Page Load
+        window.onload = function () {
+            //variaveis
+            iduser_global = queryString("id");
+            user_global = queryString("nom");
+            permissao_global = queryString("perm");
+            status_global = queryString("st");
+
+            //consulta
+            var sret = Pontos_Usuario(iduser_global, permissao_global);
+
+            //valida retorno
+            if (sret == '[]') {
+                //alerta
+                document.getElementById("alerta").style = "display: visible;";
+                document.getElementById("alerta").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Sem Pontos cadastrado!";
+            }
+            else {
+                var obj_json = JSON.parse(sret);
+
+                //
+				/*
+                navigator.geolocation.getCurrentPosition(function showpotion(position) {
+                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+                    //define conf
+                    var options = {
+                        zoom: 18,
+                        center: latlng
+                    };
+
+                    //cria mapa
+                    map2 = new google.maps.Map(document.getElementById("mapa"), options);
+
+                    //coloca marcador
+                    var marker = new google.maps.Marker({ position: latlng, map: map2, label: { text: "Você está aqui", fontSize: '16px', fontWeight: '990' } });
+
+                });
+				*/
+
+            }
+
+            //captura localização
+            //getLocation();
+
+            //limpa todos os dados da memoria
+            //window.localStorage.clear()
+
+        }
+
+        //Captura posição
+        function showPosition(position) {
+
+            //cria posicao
+            var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+            //instancia
+            const geocoder = new google.maps.Geocoder();
+
+            //captura do endereço de acordo com a LAT e LONG
+            const input = position.coords.latitude + ',' + position.coords.longitude;
+            const latlngStr = input.split(",", 2);
+            const latlng2 = {
+                lat: parseFloat(latlngStr[0]),
+                lng: parseFloat(latlngStr[1]),
+            };
+
+            //Escreve
+            geocoder
+              .geocode({ location: latlng2 })
+              .then((response) => {
+
+                  var saddress = response.results[0].formatted_address;
+                  var sn = response.results[0].formatted_address.split(",");
+                  document.getElementById("txtendereco").value = saddress.split(",", 1);
+                  document.getElementById("txtnumero").value = sn[1].split("-", 1);
+
+              })
+              .catch((e) => window.alert("Geocoder failed due to: " + e));
+        }
+
+        //String URL
+        function queryString(parameter) {
+            var loc = location.search.substring(1, location.search.length);
+            var param_value = false;
+            var params = loc.split("&");
+            for (i = 0; i < params.length; i++) {
+                param_name = params[i].substring(0, params[i].indexOf('='));
+                if (param_name == parameter) {
+                    param_value = params[i].substring(params[i].indexOf('=') + 1)
+                }
+            }
+            if (param_value) {
+                return param_value;
+            }
+            else {
+                return undefined;
+            }
+        }
+
+        //Captura localização
+        function getLocation() {
+
+            if (navigator.geolocation) {
+
+                navigator.geolocation.getCurrentPosition(showPosition);
+            }
+        }
+
+        //Abre pagina
+        function open_page(pagina) {
+
+            if (pagina == "maps.html") {
+                window.location = 'http://www.gatlink.com.br/bccapp/' + pagina + '?id=' + iduser_global + '&nom=' + user_global + '&perm=' + permissao_global + '&st=' + status_global;
+            }
+            else {
+                window.location = pagina + '?id=' + iduser_global + '&nom=' + user_global + '&perm=' + permissao_global + '&st=' + status_global;
+            }
+
+            
+            //window.location = 'https://www.gatlink.com.br/appmercadopago/' + pagina + '?id=' + iduser_global + '&nom=' + user_global + '&perm=' + permissao_global + '&st=' + status_global;
+        }
+
+        //Anição dos marcadores do mapa
+        function toggleBounce() {
+            if (marker.getAnimation() !== null) {
+                marker.setAnimation(null);
+            } else {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+		
+		
+		function imprimirNiveis(objeto, prefixo) {
+  for (var chave in objeto) {
+    if (objeto.hasOwnProperty(chave)) {
+      var valor = objeto[chave];
+
+      // Verificar se o valor é um objeto e, em seguida, chamar a função recursivamente
+      if (typeof valor === 'object' && valor !== null) {
+        imprimirNiveis(valor, prefixo + chave + '.');
+      } else {
+        console.log(prefixo + chave + ": " + valor);
+      }
+    }
+  }
+}
+
+        //Pesquisa endereço vital
+        function PesquisaEndereco() {
+
+            document.getElementById("alertacomplemento").style.display = "none";
+            document.getElementById("alertaviabilidade").style.display = "none";
+            document.getElementById("div_Ends").style.display = "none";
+            document.getElementById("div_Comps").style.display = "none";
+            document.getElementById("div_cmdPesquisa").style.display = "none";
+            document.getElementById("divprodutos").style.display = "none";
+
+            if (document.getElementById("txtendereco").value == "") {
+                document.getElementById("alerta").style = "display: visible;";
+                document.getElementById("alerta").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Preencha o Endereço para a pesquisa!";
+                window.scrollTo(0, 0);
+                return;
+            }
+            if (document.getElementById("txtnumero").value == "") {
+                document.getElementById("alerta").style = "display: visible;";
+                document.getElementById("alerta").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Preencha o Número para a pesquisa!";
+                window.scrollTo(0, 0);
+                return;
+            }
+
+			var sret = PesquisaEnderecoVT(document.getElementById("txtendereco").value, document.getElementById("txtnumero").value);
+            
+            if (sret == "") {
+                document.getElementById("alerta").style = "display: visible;";
+                document.getElementById("alerta").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Endereço não localizado!";
+                window.scrollTo(0, 0);
+                return;
+            }
+            else {
+
+                document.getElementById("div_Ends").style.display = "block";
+				
+                var obj_json = JSON.parse(sret);				
+                var combo = document.getElementById('cmbenderecosvt');
+                var opt = '';
+                let x = 0
+
+                //monta os options
+                for (let index = 0; index < obj_json.addresses.address.length; index++) {
+
+                    if (x == 0) {
+                        opt = opt + "<option value='' selected>Selecione:</option>";
+                        x = 1;
+                    }
+                    opt = opt + "<option value=" + obj_json.addresses.address[index].id + ">" + obj_json.addresses.address[index].description + "</option>";
+                }
+
+                //carrega o combo com as opções
+                combo.innerHTML = opt;
+            }
+        }
+
+        // Pesquisa os complementos do endereco
+        function PesquisaComplemento(svalor) {
+            document.getElementById("alertacomplemento").style.display = "none";
+            if (svalor == "") {
+                document.getElementById("alerta").style = "display: visible;";
+                document.getElementById("alerta").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Sem retorno API";
+                window.scrollTo(0, 0);
+                return;
+            }
+
+            var sret = PesquisaEnderecoComplementoVT(svalor);
+            var obj_json = JSON.parse(sret);
+                       
+            if (obj_json.control.code == "404") {
+                document.getElementById("alertacomplemento").style = "display: visible;";
+                document.getElementById("alertacomplemento").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Esse endereço não contém complementos";
+                document.getElementById("div_cmdPesquisa").style.display = "block";
+                return;
+            }
+            else {
+
+                document.getElementById("div_Comps").style.display = "block";
+
+                
+                var combo = document.getElementById('cmbcomplementos');
+                var opt = '';
+                let x = 0
+                
+                //monta os options
+                for (let index = 0; index < obj_json.complementList.length; index++) {
+
+                    if (x == 0) {
+                        opt = opt + "<option value='' selected>Selecione:</option>";
+                        x = 1;
+                    }
+                    
+                    opt = opt + "<option value=" + document.getElementById('cmbenderecosvt').value + ";" + obj_json.complementList[index].complement.complements[0].type + ";" + obj_json.complementList[index].complement.complements[0].description + ";" + obj_json.complementList[index].complement.complements[0].value + ">" + obj_json.complementList[index].complement.complements[0].type + " - " + obj_json.complementList[index].complement.complements[0].description + " - " + obj_json.complementList[index].complement.complements[0].value + "</option>";
+                    //opt = opt + "<option value=" + document.getElementById('cmbenderecosvt').value + ">" + obj_json.complementList[index].complement.complements[0].type + " - " + obj_json.complementList[index].complement.complements[0].description + " - " + obj_json.complementList[index].complement.complements[0].value + "</option>";
+                }
+
+                //carrega o combo com as opções
+                combo.innerHTML = opt;
+                document.getElementById("div_cmdPesquisa").style.display = "block";
+            }
+        }
+
+        //
+        function PesquisarViabilidade() {
+
+            var sdiv = document.getElementById("divprodutos");
+            var detalhes = "";
+
+            if (document.getElementById("alertacomplemento").style.display == "none") {
+
+                if (document.getElementById('cmbcomplementos').value == "") {
+                    document.getElementById("alerta").style = "display: visible;";
+                    document.getElementById("alerta").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Selecione um complemento!";
+                    window.scrollTo(0, 0);
+                    return;
+                }
+
+                var svalor = document.getElementById("cmbcomplementos").value.split(";");
+                
+                var id = svalor[0];
+                var tipo = svalor[1];
+                var desc = svalor[2];
+                var val = svalor[3];
+
+                var sret = Pesquisa_Viabilidade_Complementos(id, tipo, desc, val);
+                var obj_json = JSON.parse(sret);
+                
+                if (obj_json.control.code == "404") {
+                    document.getElementById("alertaviabilidade").style = "display: visible;";
+                    document.getElementById("alertaviabilidade").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Sem Viabilidade!";
+                    return;
+                }
+                else {
+
+                    detalhes = detalhes + "<span style='text-shadow: 0 0 0.1em #F3FF01, 0 0 0.01em #F3FF01'>Produtos Confirmados</span><hr />";
+
+                    for (var index = 0; index < obj_json.resource.products.product.length; index++) {
+
+                        detalhes = detalhes + "<div class='panel panel-white ui-sortable-handle' style='border-radius: 10px;box-shadow:0px 0px 1em #BBC0C8'><div class='panel-heading' style='padding:18px 18px 10px 18px;height: 30%'><span style='text-shadow: 0 0 0.1em #F3FF01, 0 0 0.01em #F3FF01'><span class='menu-icon glyphicon glyphicon-ok' style='padding-right:5px'></span>" + obj_json.resource.products.product[index].name + "</span><div class='panel-control'></div></div><div><br><div class='panel-body' style='padding-top:12px;'>" +
+
+                        "<label style='font-size:14px;'><b>Type:" + obj_json.resource.products.product[index].type + "</b></label><p></p>" +
+                        "<label style='font-size:14px;'><b>Catalog Id:" + obj_json.resource.products.product[index].catalogId + "</b></label><p></p>" +
+                        "<label style='font-size:14px;'><b>Name:" + obj_json.resource.products.product[index].name + "</b></label><p></p>" +
+                        "<label style='font-size:14px;'><b>Technology:" + obj_json.resource.products.product[index].technology + "</b></label></div></div></div>";
+                    }
+                    sdiv.style.display = "block";
+                    sdiv.innerHTML = detalhes;
+                }
+            }
+            else {
+                var sret = Pesquisa_Viabilidade(document.getElementById('cmbenderecosvt').value);
+                var obj_json = JSON.parse(sret);
+                
+                if (obj_json.control.code == "404" || obj_json.control.code == "401") {
+                    document.getElementById("alertaviabilidade").style = "display: visible;";
+                    document.getElementById("alertaviabilidade").innerHTML = "<strong><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;Atenção !</strong> Sem Viabilidade!";
+                    return;
+                }
+                else {
+                    
+                    detalhes = detalhes + "<span style='text-shadow: 0 0 0.1em #F3FF01, 0 0 0.01em #F3FF01'>Produtos Confirmados</span><hr />";
+
+                    for (var index = 0; index < obj_json.resource.products.product.length; index++) {
+
+                        detalhes = detalhes + "<div class='panel panel-white ui-sortable-handle' style='border-radius: 10px;box-shadow:0px 0px 1em #BBC0C8'><div class='panel-heading' style='padding:18px 18px 10px 18px;height: 30%'><span style='text-shadow: 0 0 0.1em #F3FF01, 0 0 0.01em #F3FF01'><span class='menu-icon glyphicon glyphicon-ok' style='padding-right:5px'></span>" + obj_json.resource.products.product[index].name + "</span><div class='panel-control'></div></div><div><br><div class='panel-body' style='padding-top:12px;'>" +
+
+                        "<label style='font-size:14px;'><b>Type:" + obj_json.resource.products.product[index].type + "</b></label><p></p>" +
+                        "<label style='font-size:14px;'><b>Catalog Id:" + obj_json.resource.products.product[index].catalogId + "</b></label><p></p>" +
+                        "<label style='font-size:14px;'><b>Name:" + obj_json.resource.products.product[index].name + "</b></label><p></p>" +
+                        "<label style='font-size:14px;'><b>Technology:" + obj_json.resource.products.product[index].technology + "</b></label></div></div></div>";
+                    }
+                    sdiv.style.display = "block";
+                    sdiv.innerHTML = detalhes;
+                }
+                                                  
+            }
+        }
+
+        //
+        function OcultaProduto() {
+            var sdiv = document.getElementById("divprodutos");
+            sdiv.style.display = "none";
+            sdiv.innerHTML = "";
+        }
+
+    </script>
+
+    <!-- Estilo -->
+    <style>
+        /* DivTable.com */
+        .divTable {
+            display: table;
+            width: 100%;
+        }
+
+        .divTableRow {
+            display: table-row;
+        }
+
+        .divTableHeading {
+            background-color: #EEE;
+            display: table-header-group;
+        }
+
+        .divTableCell, .divTableHead {
+            border: none;
+            display: table-cell;
+            padding: 3px 10px;
+        }
+
+        .divTableHeading {
+            background-color: #EEE;
+            display: table-header-group;
+            font-weight: bold;
+        }
+
+        .divTableFoot {
+            background-color: #EEE;
+            display: table-footer-group;
+            font-weight: bold;
+        }
+
+        .divTableBody {
+            display: table-row-group;
+        }
+
+
+        #mapa {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #ccc;
+            ;
+            margin-bottom: 10px;
+        }
+    </style>
+
+
+</head>
+<body class="page-header-fixed  pace-done">
+
+    <!-- Barra de Progresso -->
+    <div class="pace  pace-inactive">
+        <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+            <div class="pace-progress-inner"></div>
+        </div>
+        <div class="pace-activity"></div>
+    </div>
+
+    <!-- Espaço -->
+    <div class="overlay"></div>
+
+    <!-- BARRA DE MENU SUPERIOR --TOP -->
+    <main class="page-content content-wrap">
+
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="navbar-inner">
+
+                <div class="sidebar-pusher">
+                    <a href="javascript:void(0);" class="waves-effect waves-button waves-classic push-sidebar">
+                        <i class="fa fa-bars" style="color:#ffffff"></i>
+                    </a>
+                </div>
+
+                <!-- GAT LINK -->
+                <div class="logo-box">
+                    <a href="#" style="background-color:#464644" class="logo-text"><span style="color:#ffffff">GAT® Link</span></a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MENU ESQUERDA -  -->
+        <div class="page-sidebar sidebar">
+            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;">
+                <div class="page-sidebar-inner slimscroll" style="overflow: hidden; width: auto; height: 100%;">
+
+                    <!-- CABECALHO MENU LATERAL -->
+                    <ul class="menu accordion-menu">
+
+                        <!-- HOME -->
+                        <li><a href="javascript:open_page('gatlink.html');" class="waves-effect waves-button"><span class="menu-icon glyphicon glyphicon-home"></span><p>Home</p></a></li>
+
+                        <!-- LOGIN -->
+                        <li><a href="javascript:open_page('logingeo.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-sign-in"></span><p>Login</p></a></li>
+
+                        <!-- LOGOUT -->
+                        <li><a href="javascript:open_page('logoutgeo.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-sign-out"></span><p>Logout</p></a></li>
+
+                        <!-- CHECKIN -->
+                        <li><a href="javascript:open_page('checkin.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-map-marker"></span><p>Check-In</p></a></li>
+
+                        <!-- CHECKOUT -->
+                        <li><a href="javascript:open_page('checkout.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-external-link-square"></span><p>Check-Out</p></a></li>
+
+                        <!-- ROTAS -->
+                        <li><a href="javascript:open_page('rota.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-location-arrow"></span><p>Rotas</p></a></li>
+
+                        <!-- MAPS -->
+                        <li class="active"><a href="javascript:open_page('maps.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-globe"></span><p>Maps</p></a></li>
+
+                        <!-- CLIENTES -->
+                        <li><a href="javascript:open_page('ger_clientes.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-users"></span><p>Clientes</p></a></li>
+
+                        <!-- RELATORIO -->
+                        <li><a href="javascript:open_page('relatorio2.html');" class="waves-effect waves-button"><span class="menu-icon fa fa-bar-chart"></span><p>Relatório</p></a></li>
+
+                        <!-- SAIR -->
+                        <li><a href="login.html" class="waves-effect waves-button"><span class="menu-icon glyphicon glyphicon-share"></span><p>Sair</p></a></li>
+
+                    </ul>
+
+                </div>
+
+                <div class="slimScrollBar" style="background: rgb(204, 204, 204); width: 7px; position: absolute; top: 0px; opacity: 0.3; display: none; border-radius: 0px; z-index: 99; right: 0px; height: 1080px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 0px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 0px;"></div>
+            </div><!-- Page Sidebar Inner -->
+        </div>
+
+        <div class="page-inner">
+
+            <!-- Modal FAQ -->
+            <div class="modal fade" id="modalmaps" tabindex="-1" role="dialog" aria-labelledby="modalmapsLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h2 class="modal-title" id="modalmapsLabel">Questões Gerais</h2>
+                        </div>
+                        <br />
+                        <div class="modal-body" style="font-size:15px">
+                            <!--FAQS -->
+                            <div class="panel-body" style="background-color:white;padding:5px;">
+                                <div class='panel panel-white ui-sortable-handle' style='border-radius: 10px;box-shadow:0px 0px 1em #BBC0C8'>
+                                    <div class='panel-heading' style='padding:18px 18px 10px 18px;height: 30%'>
+                                        <span><b>1.</b>    Para que serve o Maps?</span>
+                                        <div class='panel-control'>
+                                            <a data-target="#linkfiltro" data-toggle='collapse' data-placement='top' class='panel-collapse' data-original-title='Expandir / Reduzir'><i class='icon-arrow-down'></i></a>
+                                        </div>
+                                    </div>
+                                    <div id="linkfiltro" class="collapse">
+                                        <div class="panel-body">
+                                            Para permissão Supervisor:<p></p>
+                                            1 - Serve para identificação da equipe;<p></p>
+                                            2 - Visualizar os promotores com status de Check-In;<p></p>
+                                            3 - Simular o Google Maps;<p></p>
+                                            4 - Visualizar os pontos de proximidade ao redor de sua localização.<p></p><p></p>
+                                            Para permissão Promotor:<p></p>
+                                            2 - Visualizar os promotores com status de Check-In;<p></p>
+                                            3 - Simular o Google Maps;<p></p>
+                                            4 - Visualizar os pontos de proximidade ao redor de sua localização.<p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body" style="background-color:white;padding:5px;">
+                                <div class='panel panel-white ui-sortable-handle' style='border-radius: 10px;box-shadow:0px 0px 1em #BBC0C8'>
+                                    <div class='panel-heading' style='padding:18px 18px 10px 18px;height: 30%'>
+                                        <span>2.    Em Maps é necessário realizar algum registro?</span>
+                                        <div class='panel-control'>
+                                            <a data-target="#linkfiltro2" data-toggle='collapse' data-placement='top' class='panel-collapse' data-original-title='Expandir / Reduzir'><i class='icon-arrow-down'></i></a>
+                                        </div>
+                                    </div>
+                                    <div id="linkfiltro2" class="collapse">
+                                        <div class="panel-body">
+                                            Não, somente visualização e identificação de informações.<p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body" style="background-color:white;padding:5px;">
+                                <div class='panel panel-white ui-sortable-handle' style='border-radius: 10px;box-shadow:0px 0px 1em #BBC0C8'>
+                                    <div class='panel-heading' style='padding:18px 18px 10px 18px;height: 30%'>
+                                        <span>3.    Por que não tem Pontos de Proximidade marcados?</span>
+                                        <div class='panel-control'>
+                                            <a data-target="#linkfiltro3" data-toggle='collapse' data-placement='top' class='panel-collapse' data-original-title='Expandir / Reduzir'><i class='icon-arrow-down'></i></a>
+                                        </div>
+                                    </div>
+                                    <div id="linkfiltro3" class="collapse">
+                                        <div class="panel-body">
+                                            Porque não existe um grupo de pontos cadastrado no GAT Link Administrador.<p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body" style="background-color:white;padding:5px;">
+                                <div class='panel panel-white ui-sortable-handle' style='border-radius: 10px;box-shadow:0px 0px 1em #BBC0C8'>
+                                    <div class='panel-heading' style='padding:18px 18px 10px 18px;height: 30%'>
+                                        <span>4.    Por que não tem Pontos de Proximidade marcados?</span>
+                                        <div class='panel-control'>
+                                            <a data-target="#linkfiltro4" data-toggle='collapse' data-placement='top' class='panel-collapse' data-original-title='Expandir / Reduzir'><i class='icon-arrow-down'></i></a>
+                                        </div>
+                                    </div>
+                                    <div id="linkfiltro4" class="collapse">
+                                        <div class="panel-body">
+                                            Porque não existe um grupo de pontos cadastrado no GAT Link Administrador.<p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body" style="background-color:white;padding:5px;">
+                                <div class='panel panel-white ui-sortable-handle' style='border-radius: 10px;box-shadow:0px 0px 1em #BBC0C8'>
+                                    <div class='panel-heading' style='padding:18px 18px 10px 18px;height: 30%'>
+                                        <span>5.    Para Supervisores - Por que não está marcado minha equipe no Mapa?</span>
+                                        <div class='panel-control'>
+                                            <a data-target="#linkfiltro5" data-toggle='collapse' data-placement='top' class='panel-collapse' data-original-title='Expandir / Reduzir'><i class='icon-arrow-down'></i></a>
+                                        </div>
+                                    </div>
+                                    <div id="linkfiltro5" class="collapse">
+                                        <div class="panel-body">
+                                            Porque no momento do acesso não contém promotor com status de Check-In.<p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" data-dismiss="modal" style="border-radius: 10px;width:100%; background-color:#F3FF01; height:55px; font-size:14px; border-color:#cfcfcf" class="text-center btn btn-success btn-block">FECHAR</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TITULO DA PAGINA -->
+            <div class="page-title" style="background-color:#ffffff">
+                <span style="color:#000000;font-size:27px;"><b>Maps </b></span>
+                <a data-toggle="modal" data-target="#modalmaps"><img src="Imagens/qaA.png" style="float:right;max-height:39px;max-width:45px" /></a>
+            </div>
+
+            <div id="alerta" class="alert alert-danger" style="display: none;"></div>
+
+            <!-- CORPO -->
+            <div id="main-wrapper">
+
+                <!-- PANEL -->
+                <div class="panel-body" style="border-radius:10px; box-shadow: 0px 0px 1em #BBC0C8;background-color:white;padding:7px">
+
+                    <div class="col-lg-12" style="padding:1px">
+
+                        <input type="hidden" id="h_lat" />
+                        <input type="hidden" id="h_lng" />
+                        <input type="hidden" ID="txtRenderizaMapa" />
+
+                      
+                        <!--<div id="mapax">
+							<iframe src="https://www.gatlink.com.br/bccapp/maps_2.html" width="100%" height="100%"></iframe>
+						</div>-->
+
+                        
+                        <div id="mapas"></div>
+
+                        <br />
+
+                        <!-- CAMPOS -->
+                        <div class="form-group">
+                            <label style="font-size:16px;color:#464644"><b>Endereço:<b style="color:red"> *</b></b></label>
+                            <input type="text" id="txtendereco" class="form-control" style="border-radius: 10px;width:100%; height:50px; background-color:#E7E7E8; border-color:#464644; color:#464644">
+                            <p></p>
+                            <label style="font-size:16px;color:#464644"><b>Número:<b style="color:red"> *</b></b></label>
+                            <input type="text" id="txtnumero" class="form-control" style="border-radius: 10px;width:100%; height:50px; background-color:#E7E7E8; border-color:#464644; color:#464644">
+                        </div>
+                        <br />
+
+                        <div>
+                            <button id="cmdPesquisaEnd" type="button" onclick="PesquisaEndereco();" data-dismiss="modal" style="color:#F3FF01; border-radius: 10px;width:100%; background-color:#464644; height:55px; font-size:14px; border-color:#cfcfcf" class="text-center btn btn-success btn-block">PESQUISAR ENDEREÇO</button>
+                        </div>
+                        <br />
+
+                        <div id="div_Ends" style="display:none">
+                            <label style="font-size:16px;color:#464644"><b>Endereços:</b></label>
+                            <select id="cmbenderecosvt" onchange="PesquisaComplemento(this.value)" style="border-radius: 10px;width:100%; background-color:#E7E7E8; color:#464644; height:55px; font-size:14px; border-color:#464644" class="text-center btn btn-success btn-block">
+                                <option value="" selected>Selecione:</option>
+                            </select>
+                        </div>
+                        <p></p>
+                        <div id="div_Comps" style="display:none">
+                            <label style="font-size:16px;color:#464644"><b>Complementos:</b></label>
+                            <select id="cmbcomplementos" onchange="OcultaProduto();" style="border-radius: 10px;width:100%; background-color:#E7E7E8; color:#464644; height:55px; font-size:14px; border-color:#464644" class="text-center btn btn-success btn-block">
+                                <option value="" selected>Selecione:</option>
+                            </select>
+                        </div>
+                        <p></p>
+
+                        <div id="alertacomplemento" class="alert alert-warning" style="border-radius: 10px;display: none;"></div>
+                        <p></p>
+
+                        <div id="alertaviabilidade" class="alert alert-warning" style="border-radius: 10px;display: none;"></div>
+                        <p></p>
+
+                        <!-- BOTÔES -->
+                        <div id="div_cmdPesquisa" style="display:none">
+                            <button id="cmdPesquisarViabilidade" onclick="PesquisarViabilidade();" type="button" data-dismiss="modal" style="color:#F3FF01; border-radius: 10px;width:100%; background-color:#464644; height:55px; font-size:14px; border-color:#cfcfcf" class="text-center btn btn-success btn-block">PESQUISAR VIABILIDADE</button>
+                        </div>
+                        <p></p>
+
+                        <!-- PRODUTOS -->
+                        <div id="divprodutos" class='alert' style='margin:0px;font-size:16px;display:none;' role='alert'></div>
+                        <p></p>
+
+                        <div>
+                            <button type="button" id="cmdCancelar" onclick="open_page('gatlink.html');" style="color:#F3FF01; border-radius: 10px;width:100%; background-color:#464644; height:55px; font-size:14px; border-color:#cfcfcf" class="text-center btn btn-success btn-block">VOLTAR</button>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPE -->
+            <div class="page-footer">
+                <p class="no-s">2023 © STT GAT® Link -  for World Class Solutions</p>
+            </div>
+
+            <!-- KEY -->
+            <script async defer
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBio6j0bRhFzCnt3k0mJ9eB-8TReMGeTD8">
+
+            </script>
+
+        </div>
+
+    </main>
+
+    <!-- Javascripts -->
+    <script src="files/jquery-2.1.4.min.js"></script>
+    <script src="files/jquery-ui.min.js"></script>
+    <script src="files/pace.min.js"></script>
+    <script src="files/jquery.blockui.js"></script>
+    <script src="files/bootstrap.min.js"></script>
+    <script src="files/jquery.slimscroll.min.js"></script>
+    <script src="files/switchery.min.js"></script>
+    <script src="files/jquery.uniform.min.js"></script>
+    <script src="files/classie.js"></script>
+    <script src="files/waves.min.js"></script>
+    <script src="files/main2.js"></script>
+    <script src="files/jquery.waypoints.min.js"></script>
+    <script src="files/jquery.counterup.min.js"></script>
+    <script src="files/toastr.min.js"></script>
+    <script src="files/jquery.flot.min.js"></script>
+    <script src="files/jquery.flot.time.min.js"></script>
+    <script src="files/jquery.flot.symbol.min.js"></script>
+    <script src="files/jquery.flot.resize.min.js"></script>
+    <script src="files/jquery.flot.tooltip.min.js"></script>
+    <script src="files/curvedLines.js"></script>
+    <script src="files/MetroJs.min.js"></script>
+    <script src="files/modern.js"></script>
+
+    <div id="flotTip" style="display: none; position: absolute;"></div>
+
+</body>
+</html>
