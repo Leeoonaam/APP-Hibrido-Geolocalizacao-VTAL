@@ -13,7 +13,8 @@
 - Bootstrap
 - CSS
 - API Google Maps
-
+ - API SOAP
+ - Web Service (C#)
 
 # Projeto
 Aplicativo Geolocalização para Pesquisa de Viabilidade Técnica
